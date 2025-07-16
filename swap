@@ -1,0 +1,30 @@
+import requests
+
+def get_price(symbol):
+    """Get the price of a cryptocurrency in USD using CoinGecko API."""
+    url = f"https://api.coingecko.com/api/v3/simple/price"
+    params = {
+        'ids': symbol,
+        'vs_currencies': 'usd'
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    return data[symbol]['usd']
+
+def swap(amount, from_symbol, to_symbol):
+    """Simulate a swap from one cryptocurrency to another based on current USD prices."""
+    from_price = get_price(from_symbol)
+    to_price = get_price(to_symbol)
+    # Convert the amount of 'from_symbol' to USD, then to 'to_symbol'
+    usd = amount * from_price
+    swapped_amount = usd / to_price
+    return swapped_amount
+
+if __name__ == "__main__":
+    print("Simple Crypto Swap Example")
+    from_symbol = "bitcoin"    # CoinGecko uses 'bitcoin' for BTC
+    to_symbol = "ethereum"     # CoinGecko uses 'ethereum' for ETH
+    amount = 0.01              # Amount of Bitcoin to swap
+
+    eth_received = swap(amount, from_symbol, to_symbol)
+    print(f"Swapping {amount} {from_symbol} to {to_symbol}: {eth_received:.6f} {to_symbol}")
