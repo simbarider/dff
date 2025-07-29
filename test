@@ -1,0 +1,26 @@
+2
+def check_content_for_dead_links(
+    content: str, file_path: Path, cell_id: Optional[int] = None
+) -> List[str]:
+    """Check the content of a markdown file for dead links.
+
+    This checks a markdown file for dead-links to local files.
+
+    Args:
+        content (str): The content of the file.
+        file_path (Path): The path to the file.
+        cell_id (Optional[int]): the id of the notebook cell
+
+    Returns:
+        List[str]: a list of errors (dead-links) found.
+    """
+    errors: List[str] = []
+    links = []
+    for regex in MARKDOWN_LINK_REGEX:
+        links_found = regex.findall(content)
+        for link in links_found:
+            link = link.replace(r"\_", "_")  # for gitbook
+            if "href=" in link:  # for html links
+                link = link.replace('href="', "")  # remove href=""
+                link = link[0:-1]  # remove last "
+            links.append(link)
